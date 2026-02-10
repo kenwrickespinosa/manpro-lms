@@ -4,6 +4,7 @@ import Login from "./features/auth/login/Login";
 import AuthLayout from "./layouts/authLayout/AuthLayout";
 import Otp from "./features/auth/otp/Otp";
 
+
 function App() {
   return (
     <BrowserRouter>

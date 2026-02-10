@@ -21,17 +21,12 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'firstname',
-        'middlename',
         'lastname',
-        'suffix',
-        'gender',
-        'birthdate',
-        'address',
         'username',
-        'phone_number',
         'email',
         'email_verified_at',
         'password',
+        'is_verified',
     ];
 
     public function otps(): HasMany
@@ -60,5 +55,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function details()
+    {
+        return $this->hasOne(UserDetail::class);
     }
 }
