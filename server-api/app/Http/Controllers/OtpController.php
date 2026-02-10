@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OtpMail;
 use App\Models\Otp;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -31,20 +32,10 @@ class OtpController extends Controller
             'is_used' => false
         ]);
 
-        // Mail::raw(
-        //     "Hello! Your registration OTP code is: $otpCode. It expires in 5 minutes.",
-        //     function ($message) use ($user) {
-        //         $message->to($user->email)
-        //             ->subject('Your Registration OTP');
-        //     }
-        // );
-        Mail::raw(
-            "Your OTP code is: $otpCode. Expires in 5 minutes.",
-            function ($message) use ($user, $request) {
-                $subject = $request->type === 'registration' ? 'Registration OTP' : 'Login OTP';
-                $message->to($user->email)->subject($subject);
-            }
-        );
+        Mail::to($user->email)->send(new OtpMail(
+            $user,
+            $otp->otp_code,
+        ));
 
         return response()->json(['message' => 'OTP sent successfully']);
     }
@@ -76,7 +67,7 @@ class OtpController extends Controller
         $otp->update(['is_used' => true]);
 
         if ($request->type === 'registration') {
-            $user->update(['email_verified_at'=>now()]);
+            $user->update(['email_verified_at' => now()]);
             return response()->json([
                 'message' => 'Email verified successfully. Please login.'
             ]);
