@@ -8,19 +8,21 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-
+use Illuminate\Mail\Mailables\Address;
 class OtpMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $otpCode;
+    public $user;
+    public $otp;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($otpCode)
+    public function __construct($user, $otp)
     {
-        $this->otpCode = $otpCode;
+        $this->user = $user;
+        $this->otp = $otp;
     }
 
     /**
@@ -29,7 +31,8 @@ class OtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Otp Mail',
+            from: new Address('support@manpro.ph', 'ManPro Management'),
+            subject: 'ManPro OTP Verification',
         );
     }
 
@@ -39,9 +42,10 @@ class OtpMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.otp',
+            view: 'mail.verify-otp-mail',
             with: [
-                'otpCode' => $this->otpCode,
+                'user' => $this->user,
+                'otp' => $this->otp,
             ]
         );
     }
